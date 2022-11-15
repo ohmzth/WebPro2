@@ -1,76 +1,147 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Login.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace Login.Controllers
 {
-    public class CallIssueController : Controller
+    public class CallissueController : Controller
     {
-        // GET: CallIssueController
         HttpClientHandler _clientHandler = new HttpClientHandler();
-        public CallIssueController()
+        public CallissueController()
         {
-            _clientHandler.ServerCertificateCustomValidationCallback = 
-                (sender, cert, charin, sslPolicyErros) => { return true; };
+            _clientHandler.ServerCertificateCustomValidationCallback =
+               (sender, cert, chain, SslPolicyErrors) => { return true; };
         }
-        public ActionResult Index()
+        // GET: Callissue
+        public async Task<ActionResult> Index()
         {
-            return View();
-        }
-            // GET: CallIssueController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
+            var issue = await GetIssues();
+            return View(issue);
         }
 
-        // GET: CallIssueController/Create
+        [HttpGet]
+        public async Task<List<Issue>> GetIssues()
+        {
+            List<Issue> issueList = new List<Issue>();
+            using (var httpClient = new HttpClient(_clientHandler))
+            {
+                using (var response = await httpClient.GetAsync("https://localhost:7084/api/Issue"))
+                {
+                    string strJson = await response.Content.ReadAsStringAsync();
+                    issueList = JsonConvert.DeserializeObject<List<Issue>>(strJson);
+                }
+            }
+            return issueList;
+        }
+        public async Task<ActionResult> Details(int id)
+        {
+            Issue issue = new Issue();
+            using (var httpClient = new HttpClient(_clientHandler))
+            {
+                using (var response = await httpClient.GetAsync("https://localhost:7084/api/Issue/id?id=" + id))
+                {
+                    string strJson = await response.Content.ReadAsStringAsync();
+                    issue = JsonConvert.DeserializeObject<Issue>(strJson);
+                }
+            }
+            return View(issue);
+        }
+
+
+
+        // GET: Callissue/Create
+
+
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: CallIssueController/Create
+        // POST: Callissue/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(Issue issue)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                Issue sue = new Issue();
+                using (var httpClient = new HttpClient(_clientHandler))
+                {
+                    StringContent content =
+                        new StringContent(JsonConvert.SerializeObject(issue), Encoding.UTF8, "application/json");
+                    using (var response = await httpClient.PostAsync("https://localhost:7084/api/Issue", content))
+                    {
+                        string strJson = await response.Content.ReadAsStringAsync();
+                        sue = JsonConvert.DeserializeObject<Issue>(strJson);
+                        if (ModelState.IsValid)
+                        {
+                            return RedirectToAction(nameof(Index));
+                        }
+                    }
+                }
+
+                return View(sue);
             }
             catch
             {
                 return View();
             }
+
         }
 
-        // GET: CallIssueController/Edit/5
-        public ActionResult Edit(int id)
+        // GET: Callissue/Edit/5
+        public async Task<ActionResult> Edit(int id)
         {
-            return View();
+            Issue issue = new Issue();
+            using (var httpClient = new HttpClient(_clientHandler))
+            {
+                using (var response = await httpClient.GetAsync("https://localhost:7084/api/Issue/id?id=" + id))
+                {
+                    string strJson = await response.Content.ReadAsStringAsync();
+                    issue = JsonConvert.DeserializeObject<Issue>(strJson);
+                }
+            }
+            return View(issue);
         }
 
-        // POST: CallIssueController/Edit/5
+        // POST: Callissue/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(int id, Issue issue)
         {
-            try
+
+            Issue sue = new Issue();
+            using (var httpClient = new HttpClient(_clientHandler))
             {
-                return RedirectToAction(nameof(Index));
+                StringContent content =
+                        new StringContent(JsonConvert.SerializeObject(issue), Encoding.UTF8, "application/json");
+                using (var response = await httpClient.PutAsync("https://localhost:7084/api/Issue/" + id, content))
+                {
+
+                }
             }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction(nameof(Index));
         }
 
-        // GET: CallIssueController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
+        // GET: Callissue/Delete/5
 
-        // POST: CallIssueController/Delete/5
+        public async Task<ActionResult> Delete(int id)
+        {
+            string del = "";
+            using (var httpClient = new HttpClient(_clientHandler))
+            {
+
+                using (var response = await httpClient.DeleteAsync("https://localhost:7084/api/Issue/" + id))
+                {
+                    del = await response.Content.ReadAsStringAsync();
+                }
+            }
+            return RedirectToAction(nameof(Index));
+
+        }
+        // POST: Callissue/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)
