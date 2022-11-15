@@ -1,10 +1,10 @@
-﻿using DemoWebAPIforstd.Data;
-using DemoWebAPIforstd.Models;
+﻿using WebApi.Data;
+using WebApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace DemoWebAPIforstd.Controllers
+namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
