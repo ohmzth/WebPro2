@@ -49,19 +49,23 @@ namespace Login.Controllers
             }
             return View(issue);
         }
-        public async Task<ActionResult> search(int id)
+
+        public async Task<List<Issue>> search(int id)
         {
+            List<Issue> issueList = new List<Issue>();
             Issue issue = new Issue();
             using (var httpClient = new HttpClient(_clientHandler))
             {
-                using (var response = await httpClient.GetAsync("https://localhost:7084/api/Issue/id?id=" + id))
+                using (var response = await httpClient.GetAsync("https://localhost:7084/api/Issue/id?id" + id))
                 {
                     string strJson = await response.Content.ReadAsStringAsync();
-                    issue = JsonConvert.DeserializeObject<Issue>(strJson);
+                    issueList = JsonConvert.DeserializeObject<List<Issue>>(strJson);
                 }
             }
-            return View(issue);
+            return issueList;
         }
+      
+     
 
 
 
