@@ -1,6 +1,7 @@
 ﻿using Login.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Text;
 
@@ -36,6 +37,19 @@ namespace Login.Controllers
             return issueList;
         }
         public async Task<ActionResult> Details(int id)
+        {
+            Issue issue = new Issue();
+            using (var httpClient = new HttpClient(_clientHandler))
+            {
+                using (var response = await httpClient.GetAsync("https://localhost:7084/api/Issue/id?id=" + id))
+                {
+                    string strJson = await response.Content.ReadAsStringAsync();
+                    issue = JsonConvert.DeserializeObject<Issue>(strJson);
+                }
+            }
+            return View(issue);
+        }
+        public async Task<ActionResult> search(int id)
         {
             Issue issue = new Issue();
             using (var httpClient = new HttpClient(_clientHandler))
@@ -124,6 +138,8 @@ namespace Login.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
+
+       
 
         // GET: Callissue/Delete/5
 
