@@ -41,6 +41,7 @@
     </dl>
 </div>
 <div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-action="Index">Back to List</a>
+    <button class="d-none d-sm-inline-block btn btn-sm btn-Warning shadow-sm">
+        @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) </button>
+    <a class="btn btn-primary" asp-action="Index">Back to List </a>
 </div>
