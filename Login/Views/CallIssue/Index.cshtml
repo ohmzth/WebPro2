@@ -1,10 +1,13 @@
-﻿@model IEnumerable<Login.Models.Issue>
+﻿@{
+	Layout="~/Views/Shared/_NewLayout1.cshtml";
+}
+@model IEnumerable<Login.Models.Issue>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>ลงทะเบียนเรียน</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
